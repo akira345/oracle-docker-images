@@ -88,6 +88,12 @@ WORKDIR /home/oracle
 HEALTHCHECK --interval=1m --start-period=5m --timeout=30s \
    CMD "$ORACLE_BASE/$CHECK_DB_FILE" >/dev/null || exit 1
 
+# chg sqlnet.ora
+RUN if grep -q "^SQLNET.ALLOWED_LOGON_VERSION_SERVER" $ORACLE_HOME/network/admin/sqlnet.ora; \
+    then sed -i 's/^SQLNET.ALLOWED_LOGON_VERSION_SERVER=.*/SQLNET.ALLOWED_LOGON_VERSION_SERVER=12/g' $ORACLE_HOME/network/admin/sqlnet.ora; \
+    else echo "SQLNET.ALLOWED_LOGON_VERSION_SERVER=12" >> $ORACLE_HOME/network/admin/sqlnet.ora; \
+    fi
+
 EXPOSE 1521/tcp
 
 CMD [ "/bin/bash", "-c", "$ORACLE_BASE/$RUN_FILE" ]

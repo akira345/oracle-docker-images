@@ -140,3 +140,10 @@ HEALTHCHECK --interval=1m --start-period=5m --timeout=30s \
 
 # Define default command to start Oracle Database. 
 CMD exec $ORACLE_BASE/$RUN_FILE
+
+# chg sqlnet.ora
+RUN if grep -q "^SQLNET.ALLOWED_LOGON_VERSION_SERVER" $ORACLE_HOME/network/admin/sqlnet.ora; \
+    then sed -i 's/^SQLNET.ALLOWED_LOGON_VERSION_SERVER=.*/SQLNET.ALLOWED_LOGON_VERSION_SERVER=12/g' $ORACLE_HOME/network/admin/sqlnet.ora; \
+    else echo "SQLNET.ALLOWED_LOGON_VERSION_SERVER=12" >> $ORACLE_HOME/network/admin/sqlnet.ora; \
+    fi
+
